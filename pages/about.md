@@ -6,6 +6,7 @@ hideTagsList: true
 eleventyNavigation:
   key: About
   weight: 2
+permalink: /about/
 ---
 
 

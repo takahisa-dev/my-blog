@@ -8,59 +8,47 @@
 
   <link rel="shortcut icon" href="{{ '/static/img/favicon.ico' | url }}" type="image/x-icon">
   <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
 </head>
 <body>
-  {% include 'components/navbar.njk' %}
+  <header class="container-fluid" 
+    style="
+      position: sticky; 
+      top: 0; z-index: 1000;
+      background-color: var(--pico-background-color); 
+      border-bottom: 1px solid var(--pico-muted-border-color); 
+      padding-top: 0.3rem; padding-bottom: 0.3rem; 
+      font-family: 'Montserrat', sans-serif;
+    "
+  >
+    <nav class="container">
+      <ul>
+        <li><strong><a href="/">My Blog</a></strong></li>
+      </ul>
+      <ul>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/posts/">Posts</a></li>
+        <li><a href="/tags/">Tags</a></li> 
+        <li><button id="themeToggle">🌙 / ☀️</button></li>
+      </ul>
+    </nav>
+  </header>
   {{ content | safe }}
   {% include 'components/footer.njk' %}
+<script>
+  const toggle = document.getElementById("themeToggle");
+  const current = localStorage.getItem("theme");
 
-  <script>
-    const ham = document.querySelector('.navbar__hamburger')
-    const menu = document.querySelector('.navbar__mobile-links')
-    const darkToggleButtons = document.querySelectorAll('.dark-toggle')
+  if (current === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
 
-    function changeDarkToggleBtnIcon () {
-      darkToggleButtons.forEach(btn => {
-        if (btn.querySelector('img').src.indexOf('/static/img/moon.svg') !== -1) {
-          btn.querySelector('img').src = "{{ '/static/img/sun.svg' | url }}"
-        } else {
-          btn.querySelector('img').src = "{{ '/static/img/moon.svg' | url }}"
-        }
-      })
-    }
-
-    if (
-      localStorage.prefsDark === 'true' || 
-      (
-        window.matchMedia && 
-        window.matchMedia('(prefers-color-scheme: dark)').matches && 
-        localStorage.prefsDark !== 'false')
-      ) {
-      document.body.classList.add('dark')
-      changeDarkToggleBtnIcon()
-    }
-
-    ham.addEventListener('click', () => {
-      menu.classList.toggle('navbar__mobile-links--open')
-
-      let prevState = JSON.parse(ham.getAttribute('aria-expanded'))
-      ham.setAttribute('aria-expanded', !prevState)
-    })
-
-    darkToggleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        changeDarkToggleBtnIcon()
-
-        if (document.body.classList.contains('dark')) {
-          document.body.classList.remove('dark')
-          localStorage.prefsDark = 'false'
-        } else {
-          document.body.classList.add('dark')
-          localStorage.prefsDark = 'true'
-        }
-
-      })
-    })
-  </script>
+  toggle.addEventListener("click", () => {
+    const currentTheme = document.documentElement.getAttribute("data-theme");
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", nextTheme);
+    localStorage.setItem("theme", nextTheme);
+  });
+</script>
 </body>
 </html>
